@@ -1,0 +1,1 @@
+from .apnews import FetchNewsView
