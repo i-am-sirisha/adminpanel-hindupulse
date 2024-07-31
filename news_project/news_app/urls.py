@@ -1,7 +1,10 @@
-from django.urls import path
-from .views import FetchNewsView
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import *
+
+router = DefaultRouter()
+router.register('apnews', ApNewsViewSet)
 
 urlpatterns = [
-    
-    path('fetch_news/', FetchNewsView.as_view(), name='fetch_news'),
+    path('', include(router.urls)),
 ]
