@@ -13,7 +13,7 @@ class ApNewsModel(models.Model):
     def __str__(self):
         return self.headline
     class Meta:
-        managed = True
+        managed = False
         db_table = "ap_news"
         
         
