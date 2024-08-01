@@ -256,18 +256,45 @@ class ApNewsViewSet(viewsets.ModelViewSet):
 
         return articles
 
+    # def fetch_article_details(self, url):
+    #     response = requests.get(url)
+    #     response.raise_for_status()
+    #     html_content = response.text
+
+    #     soup = BeautifulSoup(html_content, 'html.parser')
+    #     headline_tag = soup.find('h1', class_='sp-ttl')
+    #     headline = headline_tag.get_text(strip=True) if headline_tag else 'N/A'
+
+    #     article_data = {
+    #         'Headline': headline,
+    #         'URL': url
+    #     }
+
+    #     return article_data
+
+
     def fetch_article_details(self, url):
-        response = requests.get(url)
-        response.raise_for_status()
-        html_content = response.text
+        try:
+            response = requests.get(url)
+            response.raise_for_status()  # Raises an HTTPError for bad responses (4xx and 5xx)
+            html_content = response.text
 
-        soup = BeautifulSoup(html_content, 'html.parser')
-        headline_tag = soup.find('h1', class_='sp-ttl')
-        headline = headline_tag.get_text(strip=True) if headline_tag else 'N/A'
+            soup = BeautifulSoup(html_content, 'html.parser')
+            headline_tag = soup.find('h1', class_='sp-ttl')
+            headline = headline_tag.get_text(strip=True) if headline_tag else 'N/A'
 
-        article_data = {
-            'Headline': headline,
-            'URL': url
-        }
+            article_data = {
+                'Headline': headline,
+                'URL': url
+            }
 
-        return article_data
+            return article_data
+        except requests.exceptions.RequestException as e:
+            # Handle specific exceptions if necessary
+            print(f"An error occurred: {e}")
+            return {
+                'Headline': 'N/A',
+                'URL': url,
+                'Error': str(e)
+            }
+

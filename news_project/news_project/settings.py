@@ -30,6 +30,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# AUTH_USER_MODEL = 'news_app.ProductionApNewsModel'
+
+
 
 # Application definition
 
@@ -98,14 +101,26 @@ WSGI_APPLICATION = 'news_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv("DB_ENGINE"),
-        'NAME': os.getenv("DB_NAME"),
-        'USER': os.getenv("DB_USER"),
-        'PASSWORD': os.getenv("DB_PASSWORD"),
-        'HOST': os.getenv("DB_HOST"),
-        'PORT': os.getenv("DB_PORT"),
+        'ENGINE': 'django.db.backends.mysql',  # or the appropriate backend
+        'NAME': 'hinduadmin',
+        'USER': 'root',
+        'PASSWORD': 'admin',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    },
+    'production_db': {
+        'ENGINE': 'django.db.backends.mysql',  # or the appropriate backend
+        'NAME': 'production_db',
+        'USER': 'root',
+        'PASSWORD': 'admin',
+        'HOST': 'localhost',
+        'PORT': '3306',
     },
 }
+
+
+DATABASE_ROUTERS = ['news_project.db_routers.ProductionRouter']
+
 
 
 

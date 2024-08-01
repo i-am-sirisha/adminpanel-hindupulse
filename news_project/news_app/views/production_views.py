@@ -6,24 +6,6 @@ from rest_framework.decorators import action
 from ..models import StagingApNewsModel, ProductionApNewsModel
 from ..serializers import StagingApNewsSerializer, ProductionApNewsSerializer
 
-# class ProductionViewSet(viewsets.ModelViewSet):
-#     queryset = StagingApNewsModel.objects.all()
-#     serializer_class = StagingApNewsSerializer
-
-#     @action(detail=False, methods=['post'])
-#     def transfer_to_production(self, request):
-#         staging_news = StagingApNewsModel.objects.all()
-#         for news in staging_news:
-#             production_news = ProductionApNewsModel(
-#                 _id=news._id,
-#                 headline=news.headline,
-#                 summary=news.summary,
-#                 link=news.link,
-#                 image=news.image,
-#                 url=news.url
-#             )
-#             production_news.save()
-#         return Response({"message": "Data transferred to production successfully."}, status=status.HTTP_200_OK)
 
 
 
@@ -48,7 +30,7 @@ class ProductionViewSet(viewsets.ModelViewSet):
             return Response({"error": "Record not found in staging database"}, status=status.HTTP_404_NOT_FOUND)
 
         # Check if the record already exists in production
-        production_record, created = ProductionApNewsModel.objects.update_or_create(
+        production_record, created = ProductionApNewsModel.objects.using('production_db').update_or_create(
             _id=staging_record._id,
             defaults={
                 'headline': staging_record.headline,
@@ -64,6 +46,24 @@ class ProductionViewSet(viewsets.ModelViewSet):
 
 
 
+# class ProductionViewSet(viewsets.ModelViewSet):
+#     queryset = StagingApNewsModel.objects.all()
+#     serializer_class = StagingApNewsSerializer
+
+#     @action(detail=False, methods=['post'])
+#     def transfer_to_production(self, request):
+#         staging_news = StagingApNewsModel.objects.all()
+#         for news in staging_news:
+#             production_news = ProductionApNewsModel(
+#                 _id=news._id,
+#                 headline=news.headline,
+#                 summary=news.summary,
+#                 link=news.link,
+#                 image=news.image,
+#                 url=news.url
+#             )
+#             production_news.save()
+#         return Response({"message": "Data transferred to production successfully."}, status=status.HTTP_200_OK)
 
 
 
