@@ -2,15 +2,15 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from ..models import ApNewsModel
-from ..serializers import ApNewsSerializer
+from ..models import StagingApNewsModel
+from ..serializers import StagingApNewsSerializer
 import requests
 from bs4 import BeautifulSoup
 import uuid
 
 class ApNewsViewSet(viewsets.ModelViewSet):
-    queryset = ApNewsModel.objects.all()
-    serializer_class = ApNewsSerializer
+    queryset = StagingApNewsModel.objects.all()
+    serializer_class = StagingApNewsSerializer
 
     @action(detail=False, methods=['get'])
     def fetch_news(self, request):
@@ -40,7 +40,7 @@ class ApNewsViewSet(viewsets.ModelViewSet):
             # Generate a unique _id for each article
             unique_id = str(uuid.uuid4())
 
-            obj, created = ApNewsModel.objects.update_or_create(
+            obj, created = StagingApNewsModel.objects.update_or_create(
                 _id=unique_id,  # Use the generated unique _id
                 defaults={
                     'headline': article['Headline'],
@@ -154,9 +154,6 @@ class ApNewsViewSet(viewsets.ModelViewSet):
 
         return articles
     
-
-
-
     def fetch_news24website(self, url):
         response = requests.get(url)
         response.raise_for_status()

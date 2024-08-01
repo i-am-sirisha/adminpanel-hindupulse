@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from ..models import *
 
-class ApNewsSerializer(serializers.ModelSerializer):
+class StagingApNewsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ApNewsModel
+        model = StagingApNewsModel
         fields = "__all__"
