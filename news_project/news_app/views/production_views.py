@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404
 
 class ProductionViewSet(viewsets.ModelViewSet):
     queryset = StagingApNewsModel.objects.all()
-    serializer_class = StagingApNewsSerializer
+    # serializer_class = StagingApNewsSerializer
 
     @action(detail=False, methods=['post'], url_path='transfer_to_production/(?P<_id>[^/.]+)')
     def transfer_to_production(self, request, _id=None):

@@ -24,25 +24,22 @@ class ApNewsViewSet(viewsets.ModelViewSet):
         # Use a default URL list if request is None
         urls = request.GET.getlist('url', ['https://apnews.com/', 'https://www.cnbc.com/world/?region=world', 'https://www.news24.com/', 'https://www.nbcnews.com/']) if request else ['https://apnews.com/', 'https://www.cnbc.com/world/?region=world', 'https://www.news24.com/', 'https://www.nbcnews.com/',]
 
-    # @action(detail=False, methods=['get'])
-    # # def fetch_news(self, request):
-    # def fetch_news(self, request=None):
-    #     urls = request.GET.getlist('url', ['https://apnews.com/', 'https://www.cnbc.com/world/?region=world','https://www.news24.com/','https://www.nbcnews.com/'])
+   
         all_news_data = []
 
         for url in urls:
             if 'apnews.com' in url:
                 news_data = self.fetch_apnews(url)
-                # print("AP News Data:", news_data)
+                print("AP News Data:", news_data)
             elif 'cnbc.com' in url:
                 news_data = self.fetch_cbncnewswebsite(url)
-                # print("CNBC News Data:", news_data)
+                print("CNBC News Data:", news_data)
             elif 'news24.com' in url:
                 news_data = self.fetch_news24website(url)
-                # print("NEWS24 News Data:", news_data)
+                print("NEWS24 News Data:", news_data)
             elif 'nbcnews.com' in url:
                 news_data = self.fetch_NbcNewswebsite(url)
-                print("Nbc News News Data:", news_data)
+                print("Nbc News Data:", news_data)
             else:
                 continue
 
