@@ -13,8 +13,21 @@ class ApNewsViewSet(viewsets.ModelViewSet):
     serializer_class = StagingApNewsSerializer
 
     @action(detail=False, methods=['get'])
-    def fetch_news(self, request):
-        urls = request.GET.getlist('url', ['https://apnews.com/', 'https://www.cnbc.com/world/?region=world','https://www.news24.com/','https://www.nbcnews.com/'])
+    def fetch_news(self, request=None):
+        # Call the core method with URLs
+        self.process_news(request)
+
+        if request:
+            return Response({"status": "News fetched and processed."})
+
+    def process_news(self, request):
+        # Use a default URL list if request is None
+        urls = request.GET.getlist('url', ['https://apnews.com/', 'https://www.cnbc.com/world/?region=world', 'https://www.news24.com/', 'https://www.nbcnews.com/']) if request else ['https://apnews.com/', 'https://www.cnbc.com/world/?region=world', 'https://www.news24.com/', 'https://www.nbcnews.com/',]
+
+    # @action(detail=False, methods=['get'])
+    # # def fetch_news(self, request):
+    # def fetch_news(self, request=None):
+    #     urls = request.GET.getlist('url', ['https://apnews.com/', 'https://www.cnbc.com/world/?region=world','https://www.news24.com/','https://www.nbcnews.com/'])
         all_news_data = []
 
         for url in urls:
@@ -28,8 +41,8 @@ class ApNewsViewSet(viewsets.ModelViewSet):
                 news_data = self.fetch_news24website(url)
                 # print("NEWS24 News Data:", news_data)
             elif 'nbcnews.com' in url:
-                news_data = self.fetch_Bloombergwebsite(url)
-                print("Bloomberg News Data:", news_data)
+                news_data = self.fetch_NbcNewswebsite(url)
+                print("Nbc News News Data:", news_data)
             else:
                 continue
 
@@ -205,7 +218,7 @@ class ApNewsViewSet(viewsets.ModelViewSet):
 
         return articles
     
-    def fetch_Bloombergwebsite(self, url):
+    def fetch_NbcNewswebsite(self, url):
         response = requests.get(url)
         response.raise_for_status()
         html_content = response.text
@@ -255,22 +268,6 @@ class ApNewsViewSet(viewsets.ModelViewSet):
                 })
 
         return articles
-
-    # def fetch_article_details(self, url):
-    #     response = requests.get(url)
-    #     response.raise_for_status()
-    #     html_content = response.text
-
-    #     soup = BeautifulSoup(html_content, 'html.parser')
-    #     headline_tag = soup.find('h1', class_='sp-ttl')
-    #     headline = headline_tag.get_text(strip=True) if headline_tag else 'N/A'
-
-    #     article_data = {
-    #         'Headline': headline,
-    #         'URL': url
-    #     }
-
-    #     return article_data
 
 
     def fetch_article_details(self, url):

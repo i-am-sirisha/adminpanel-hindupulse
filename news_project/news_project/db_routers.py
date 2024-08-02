@@ -1,5 +1,4 @@
 
-
 class ProductionRouter:
     def db_for_read(self, model, **hints):
         """Directs read operations for `ProductionApNewsModel` to `production_db`."""
@@ -19,9 +18,8 @@ class ProductionRouter:
             return True
         return None
 
-def allow_migrate(self, db, app_label, model_name=None, **hints):
-    """Controls where migrations are allowed based on app_label and model_name."""
-    if app_label == 'news_app' and model_name == 'ProductionApNewsModel':
-        return db == 'production_db'
-    return db == 'default'
-
+    def allow_migrate(self, db, app_label, model_name=None, **hints):
+        """Controls where migrations are allowed based on app_label and model_name."""
+        if model_name == 'productionapnewsmodel':
+            return db == 'production_db'
+        return db == 'default'
