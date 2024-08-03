@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 
 
 
-class ProductionViewSet(viewsets.ModelViewSet):
+class StagingToProductionViewSet(viewsets.ModelViewSet):
     queryset = StagingApNewsModel.objects.all()
     serializer_class = StagingApNewsSerializer
 
@@ -41,3 +41,6 @@ class ProductionViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+class ProductionViewSet(viewsets.ModelViewSet):
+    queryset = ProductionApNewsModel.objects.all()
+    serializer_class = ProductionApNewsSerializer
