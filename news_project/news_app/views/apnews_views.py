@@ -171,11 +171,11 @@ class ApNewsViewSet(viewsets.ModelViewSet):
 
         soup = BeautifulSoup(html_content, 'html.parser')
         articles = []
-        news_items = soup.find_all('div', class_='left wrap-text art-size--tiny')
-        # print("88888888888888888",news_items)
+        news_items = soup.find_all('div', class_='article-list tf-grid')
+        print("88888888888888888",news_items)
 
         for item in news_items:
-            headline_tag = item.find('div', class_='article-list tf-grid')
+            headline_tag = item.find('div', class_='article-item__title')
             headline = headline_tag.get_text(strip=True) if headline_tag else None
             print("jjjjjjjjjjj",headline)
 

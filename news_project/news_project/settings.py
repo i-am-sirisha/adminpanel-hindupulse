@@ -176,7 +176,7 @@ CELERY_TIMEZONE = 'UTC'
 CELERY_BEAT_SCHEDULE = {
     'fetch-news-every-10-minutes': {
         'task': 'news_app.tasks.fetch_and_store_news',
-        'schedule': 3600.0,  # 10 minutes in seconds
+        'schedule': 180.0,  # 10 minutes in seconds
     },
 }
 
