@@ -34,6 +34,8 @@ class StagingToProductionViewSet(viewsets.ModelViewSet):
                     'link': staging_record.link,
                     'image': staging_record.image,
                     'url': staging_record.url,
+                    'category_id': staging_record.category,
+                    'news_sub_category_id': staging_record.subcategory,
                 }
             )
             message = "Data transferred to production successfully." if created else "Data updated in production successfully."
