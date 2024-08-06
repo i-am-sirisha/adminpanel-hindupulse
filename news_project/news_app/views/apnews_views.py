@@ -22,7 +22,7 @@ class ApNewsViewSet(viewsets.ModelViewSet):
 
     def process_news(self, request):
         # Use a default URL list if request is None
-        urls = request.GET.getlist('url', ['https://apnews.com/', 'https://www.cnbc.com/world/?region=world', 'https://www.news24.com/', 'https://www.nbcnews.com/','https://www.abc.net.au/news','https://www.bbc.com/news','https://edition.cnn.com/world','https://www.aljazeera.com','https://asia.nikkei.com/']) if request else ['https://apnews.com/', 'https://www.cnbc.com/world/?region=world', 'https://www.news24.com/', 'https://www.nbcnews.com/','https://www.abc.net.au/news','https://www.bbc.com/news','https://edition.cnn.com/world','https://www.aljazeera.com','https://asia.nikkei.com/']
+        urls = request.GET.getlist('url', ['https://apnews.com/', 'https://www.cnbc.com/world/?region=world', 'https://www.news24.com/', 'https://www.nbcnews.com/','https://www.abc.net.au/news','https://www.bbc.com/news','https://edition.cnn.com/world','https://www.aljazeera.com','https://asia.nikkei.com/','https://www.euronews.com/just-in']) if request else ['https://apnews.com/', 'https://www.cnbc.com/world/?region=world', 'https://www.news24.com/', 'https://www.nbcnews.com/','https://www.abc.net.au/news','https://www.bbc.com/news','https://edition.cnn.com/world','https://www.aljazeera.com','https://asia.nikkei.com/','https://www.euronews.com/just-in']
 
    
         all_news_data = []
@@ -30,32 +30,35 @@ class ApNewsViewSet(viewsets.ModelViewSet):
         for url in urls:
             if 'apnews.com' in url:
                 news_data = self.fetch_apnews(url)
-                print("AP News Data:", news_data)
+                print("AP News Data:")
             elif 'cnbc.com' in url:
                 news_data = self.fetch_cbncnewswebsite(url)
-                print("CNBC News Data:", news_data)
+                print("CNBC News Data:")
             elif 'news24.com' in url:
                 news_data = self.fetch_news24website(url)
-                print("NEWS24 News Data:", news_data)
+                print("NEWS24 News Data:")
             elif 'nbcnews.com' in url:
                 news_data = self.fetch_NbcNewswebsite(url)
-                print("Nbc News Data:", news_data)
+                print("Nbc News Data:")
             elif 'abc.net.au' in url:
                 news_data = self.fetch_AbcNewswebsite(url)
-                print("Abc News Data:", news_data)
+                print("Abc News Data:")
             elif 'bbc.com' in url:
                 news_data = self.fetch_bbcnewswebsite(url)
-                print("BBC News Data:", news_data)
+                print("BBC News Data:")
             elif 'cnn.com' in url:
                 news_data = self.fetch_cnnnews(url)
-                print('CNN News Data:', news_data)
+                print('CNN News Data:')
             elif 'aljazeera.com' in url:
                 news_data = self.fetch_aljazeeranews(url)
-                print('ALJAZEERA News Data:', news_data)
+                print('ALJAZEERA News Data:')
         
             elif 'asia.nikkei.com' in url:
                 news_data = self.fetch_asianikkeinews(url)
-                print('ASIA.NIKKEI News Data:', news_data)
+                print('ASIA.NIKKEI News Data:')
+            elif 'euronews.com' in url:
+                news_data = self.fetch_euronews(url)
+                print('euronews News Data:')
             else:
                 continue
 
@@ -296,15 +299,15 @@ class ApNewsViewSet(viewsets.ModelViewSet):
         for item in news_items:
             headline_tag = item.find('h3', class_='Typography_base__sj2RP')
             headline = headline_tag.get_text(strip=True) if headline_tag else None
-            print("111111111111111111111111111111111111",headline)
+            # print("111111111111111111111111111111111111",headline)
 
             summary_tag = item.find('div', class_='VolumeCard_synopsis__IWGFK')
             summary = summary_tag.get_text(strip=True) if summary_tag else None
-            print("2222222222222222222222222222222222222",summary)
+            # print("2222222222222222222222222222222222222",summary)
 
             image_tag = item.find('img', class_='Image_image__5tFYM')
             image = image_tag['src'] if image_tag and 'src' in image_tag.attrs else None
-            print("33333333333333333333333333333333333333333333",image)
+            # print("33333333333333333333333333333333333333333333",image)
 
             link_tag = item.find('a', href=True)
             link = link_tag['href'] if link_tag else None
@@ -512,6 +515,55 @@ class ApNewsViewSet(viewsets.ModelViewSet):
 
             if link and not link.startswith(('http://', 'https://')):
                 link = requests.compat.urljoin(url, link)
+
+            # Generate a unique URL-based identifier or use another method if necessary
+            external_id = link or str(uuid.uuid4())
+
+            if link:
+                news_details = self.fetch_article_details(link)
+                articles.append({
+                    'Headline': headline,
+                    'Summary': summary,
+                    'Link': link,
+                    'Image': image,
+                    'URL': news_details['URL'],
+                    'ExternalID': external_id  # Pass the unique identifier
+                })
+            else:
+                articles.append({
+                    'Headline': headline,
+                    'Summary': summary,
+                    'Link': link,
+                    'ExternalID': external_id  # Pass the unique identifier
+                })
+
+        return articles
+    
+    def fetch_euronews(self, url):
+        response = requests.get(url)
+        response.raise_for_status()
+        html_content = response.text
+
+        soup = BeautifulSoup(html_content, 'html.parser')
+        articles = []
+        news_items = soup.find_all('li', class_='js-timeline-item')
+
+        for item in news_items:
+            headline_tag = item.find('h3', class_='m-object__title')
+            headline = headline_tag.get_text(strip=True) if headline_tag else None
+            print("11111111111111111111111111111111111111111111",headline)
+
+            summary_tag = item.find('div', class_='m-object__description')
+            summary = summary_tag.get_text(strip=True) if summary_tag else None
+            print("2222222222222222222222222222222222",summary)
+
+            image_tag = item.find('img', class_='m-img')
+            image = image_tag['src'] if image_tag and 'src' in image_tag.attrs else None
+            print("33333333333333333333333333333333333333",image)
+
+            link_tag = item.find('a', class_='m-object__title__link')
+            link = link_tag['href'] if link_tag else None
+            print("4444444444444444444444444444444444444",link)
 
             # Generate a unique URL-based identifier or use another method if necessary
             external_id = link or str(uuid.uuid4())
