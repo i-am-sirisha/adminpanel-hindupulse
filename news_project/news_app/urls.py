@@ -14,4 +14,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('sub_category_by_id/<str:_id>/', GetSubCategoryById_InputView.as_view(), name="sub_category_by_id"),
 
+
 ]

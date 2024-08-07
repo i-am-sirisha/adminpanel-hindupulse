@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_celery_beat',
+    'django_celery_results',
     'drf_yasg',
     'rest_framework',
     'news_app',
@@ -166,22 +167,32 @@ SWAGGER_SETTINGS = {
     }
 }
 
-# # settings.py
-# CELERY_BROKER_URL = 'redis://localhost:6379/0'
-# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://:"+os.environ.get("CACHE_PWD")+"@127.0.0.1:6379",
+        "TIMEOUT": None,
+        "KEY_PREFIX" : "gramadevata_be"
+    }
+}
+# Celery settings
+
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_IMPORTS = ('news_app.tasks',) # we will implement this function in the next step, generally it is appname.file_name
+CELERY_TIMEZONE = 'Asia/Dhaka'
+
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+# CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Redis as the broker
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'  # Redis as the result backend
 # CELERY_ACCEPT_CONTENT = ['json']
 # CELERY_TASK_SERIALIZER = 'json'
 # CELERY_RESULT_SERIALIZER = 'json'
 # CELERY_TIMEZONE = 'UTC'
-
-
-# CELERY_BEAT_SCHEDULE = {
-#     'fetch-news-every-10-minutes': {
-#         'task': 'news_app.tasks.fetch_and_store_news',
-#         'schedule': 180.0,  # 10 minutes in seconds
-#     },
-# }
-
 
 
 
