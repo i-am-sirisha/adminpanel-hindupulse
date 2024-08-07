@@ -16,12 +16,12 @@ class ApNewsViewSet(viewsets.ModelViewSet):
     def fetch_news(self, request=None):
         urls = request.GET.getlist('url', [
             'https://apnews.com/', 'https://www.cnbc.com/world/?region=world',
-            'https://www.news24.com/', 'https://www.nbcnews.com/', 'https://www.abc.net.au/news',
+            'https://www.news24.com/', 'https://www.nbcnews.com/', 'https://www.abc.net.au/news/justin',
             'https://www.bbc.com/news', 'https://edition.cnn.com/world', 'https://www.aljazeera.com',
             'https://asia.nikkei.com/', 'https://www.euronews.com/just-in', 'https://www.ft.com/world','https://www.reuters.com/world/'
         ]) if request else [
             'https://apnews.com/', 'https://www.cnbc.com/world/?region=world',
-            'https://www.news24.com/', 'https://www.nbcnews.com/', 'https://www.abc.net.au/news',
+            'https://www.news24.com/', 'https://www.nbcnews.com/', 'https://www.abc.net.au/news/justin',
             'https://www.bbc.com/news', 'https://edition.cnn.com/world', 'https://www.aljazeera.com',
             'https://asia.nikkei.com/', 'https://www.euronews.com/just-in', 'https://www.ft.com/world','https://www.reuters.com/world/'
         ]
@@ -97,7 +97,7 @@ class ApNewsViewSet(viewsets.ModelViewSet):
         return self.fetch_news_from_site(url, 'li', 'styles_item__1iZnY', 'h2', 'styles_teaseTitle__H4OWQ', 'div', 'PagePromo', 'a', 'Media_imageOverlayLink__VRlFS Media_linkedImage__d5Udf', 'a', 'href')
 
     def fetch_abcnews(self, url):
-        return self.fetch_news_from_site(url, 'li', '', 'h3', 'Typography_base__sj2RP', 'div', 'VolumeCard_synopsis__IWGFK', 'img', 'Image_image__5tFYM', 'a', 'href')
+        return self.fetch_news_from_site(url, 'div', 'CardList_gridItem__aujmN', 'h3', 'CardHeading_cardHeading__FpsU_', 'div', 'GenericCard_synopsis__mgnzs', 'img', 'Image_image__5tFYM', 'a', 'href')
 
     def fetch_bbcnews(self, url):
         return self.fetch_news_from_site(url, 'div', 'sc-35aa3a40-2 cVXNac', 'h2', 'sc-4fedabc7-3 zTZri', 'p', 'sc-b8778340-4 kYtujW', 'img', 'sc-814e9212-0 hIXOPW', 'a', 'href')
