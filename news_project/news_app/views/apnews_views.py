@@ -18,12 +18,12 @@ class ApNewsViewSet(viewsets.ModelViewSet):
             'https://apnews.com/', 'https://www.cnbc.com/world/?region=world',
             'https://www.news24.com/', 'https://www.nbcnews.com/', 'https://www.abc.net.au/news',
             'https://www.bbc.com/news', 'https://edition.cnn.com/world', 'https://www.aljazeera.com',
-            'https://asia.nikkei.com/', 'https://www.euronews.com/just-in', 'https://www.ft.com/world'
+            'https://asia.nikkei.com/', 'https://www.euronews.com/just-in', 'https://www.ft.com/world','https://www.reuters.com/world/'
         ]) if request else [
             'https://apnews.com/', 'https://www.cnbc.com/world/?region=world',
             'https://www.news24.com/', 'https://www.nbcnews.com/', 'https://www.abc.net.au/news',
             'https://www.bbc.com/news', 'https://edition.cnn.com/world', 'https://www.aljazeera.com',
-            'https://asia.nikkei.com/', 'https://www.euronews.com/just-in', 'https://www.ft.com/world'
+            'https://asia.nikkei.com/', 'https://www.euronews.com/just-in', 'https://www.ft.com/world','https://www.reuters.com/world/'
         ]
 
         all_news_data = []
@@ -53,7 +53,8 @@ class ApNewsViewSet(viewsets.ModelViewSet):
             'aljazeera.com': 'aljazeera',
             'asia.nikkei.com': 'asianikkei',
             'euronews.com': 'euronews',
-            'ft.com': 'ft'
+            'ft.com': 'ft',
+            'reuters.com':'reuters',
         }
         for key, value in sources.items():
             if key in url:
@@ -115,6 +116,17 @@ class ApNewsViewSet(viewsets.ModelViewSet):
  
     def fetch_ftnews(self, url):
         return self.fetch_news_from_site(url, 'li', 'o-teaser-collection__item', 'div', 'o-teaser__heading', 'p', 'o-teaser__standfirst', 'img', 'o-teaser__image', 'a', 'href')
+    def fetch_xyznews(self, url):
+        return self.fetch_news_from_site(
+            url,
+            'li', 'story-collection__list-item__j4SQe',
+            'h3', 'text__text__1FZLe text__dark-grey__3Ml43 text__medium__1kbOh text__heading_6__1qUJ5 heading__base__2T28j heading__heading_6__RtD9P',
+           
+            'img', 'styles__image-container__3hkY5',
+            'a', 'href'
+        )
+    # def fetch_reutersnews(self, url):
+    #     return self.fetch_news_from_site(url, 'li', 'story-collection__list-item__j4SQe', 'h3', 'text__text__1FZLe text__dark-grey__3Ml43 text__medium__1kbOh text__heading_6__1qUJ5 heading__base__2T28j heading__heading_6__RtD9P', 'div', 'PagePromo', 'img', 'styles__image-container__3hkY5', 'a', 'href')
     
     def fetch_news_from_site(self, url, container_tag, container_class, headline_tag, headline_class, summary_tag, summary_class, image_tag, image_class, link_tag, link_attr):
         try:
