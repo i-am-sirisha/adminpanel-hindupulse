@@ -109,6 +109,9 @@ DATABASES = {
         'PASSWORD': 'admin',
         'HOST': 'localhost',
         'PORT': '3306',
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+        },
     },
     'production_db': {
         'ENGINE': 'django.db.backends.mysql',  # or the appropriate backend
@@ -117,6 +120,9 @@ DATABASES = {
         'PASSWORD': 'admin',
         'HOST': 'localhost',
         'PORT': '3306',
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+        },
     },
 }
 

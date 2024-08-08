@@ -18,12 +18,16 @@ class ApNewsViewSet(viewsets.ModelViewSet):
             'https://apnews.com/', 'https://www.cnbc.com/world/?region=world',
             'https://www.news24.com/', 'https://www.nbcnews.com/', 'https://www.abc.net.au/news/justin',
             'https://www.bbc.com/news', 'https://edition.cnn.com/world', 'https://www.aljazeera.com',
-            'https://asia.nikkei.com/', 'https://www.euronews.com/just-in', 'https://www.ft.com/world','https://www.reuters.com/world/'
+            'https://asia.nikkei.com/', 'https://www.euronews.com/just-in', 'https://www.ft.com/world',
+            'https://timesofindia.indiatimes.com/','https://www.scmp.com/live?module=oneline_menu_section_int&pgtype=homepage',
+            'https://www.nytimes.com/section/world','https://allafrica.com/'
         ]) if request else [
             'https://apnews.com/', 'https://www.cnbc.com/world/?region=world',
             'https://www.news24.com/', 'https://www.nbcnews.com/', 'https://www.abc.net.au/news/justin',
             'https://www.bbc.com/news', 'https://edition.cnn.com/world', 'https://www.aljazeera.com',
-            'https://asia.nikkei.com/', 'https://www.euronews.com/just-in', 'https://www.ft.com/world','https://www.reuters.com/world/'
+            'https://asia.nikkei.com/', 'https://www.euronews.com/just-in', 'https://www.ft.com/world',
+            'https://timesofindia.indiatimes.com/','https://www.scmp.com/live?module=oneline_menu_section_int&pgtype=homepage',
+            'https://www.nytimes.com/section/world','https://allafrica.com/'
         ]
 
         all_news_data = []
@@ -53,8 +57,11 @@ class ApNewsViewSet(viewsets.ModelViewSet):
             'aljazeera.com': 'aljazeera',
             'asia.nikkei.com': 'asianikkei',
             'euronews.com': 'euronews',
-            'ft.com': 'ft',
-            'reuters.com':'reuters',
+            'ft.com': 'ftnews',
+            'timesofindia.indiatimes.com':'timesofindianews',
+            'scmp.com':'scmpnews',
+            'nytimes.com':'nytimesnews',
+            'allafrica.com':'allafricanews'
         }
         for key, value in sources.items():
             if key in url:
@@ -64,24 +71,29 @@ class ApNewsViewSet(viewsets.ModelViewSet):
     def process_news_data(self, all_news_data):
         response_data = []
         for article in all_news_data:
-            unique_id = str(uuid.uuid4())
-            obj, created = StagingApNewsModel.objects.update_or_create(
-                _id=unique_id,
-                defaults={
-                    'headline': article.get('Headline'),
-                    'summary': article.get('Summary'),
-                    'link': article.get('Link'),
-                    'url': article.get('URL'),
-                    'image': article.get('Image')
-                }
-            )
-            response_data.append({
-                '_id': obj._id,
-                'Headline': obj.headline,
-                'Summary': obj.summary,
-                'Image': obj.image,
-                'Link': obj.link
-            })
+            headline = article.get('Headline')
+            summary = article.get('Summary')
+
+            # Check if at least one of Headline or Summary is present
+            if headline or summary:
+                unique_id = str(uuid.uuid4())
+                obj, created = StagingApNewsModel.objects.update_or_create(
+                    _id=unique_id,
+                    defaults={
+                        'headline': headline,
+                        'summary': summary,
+                        'link': article.get('Link'),
+                        'url': article.get('URL'),
+                        'image': article.get('Image')
+                    }
+                )
+                response_data.append({
+                    '_id': obj._id,
+                    'Headline': obj.headline,
+                    'Summary': obj.summary,
+                    'Image': obj.image,
+                    'Link': obj.link
+                })
         return response_data
 
     def fetch_apnews(self, url):
@@ -108,7 +120,7 @@ class ApNewsViewSet(viewsets.ModelViewSet):
     def fetch_aljazeera(self, url):
         return self.fetch_news_from_site(url, 'li', 'hp-featured-second-stories__item', 'h3', 'article-card__title', 'div', 'PagePromo', 'div', 'article-card__image-wrap article-card__featured-image', 'a', 'href')
     
-    def fetch_asianikkeinews(self, url):
+    def fetch_asianikkei(self, url):
         return self.fetch_news_from_site(url, 'div', 'landing-page__block block_collection', 'a', 'article-block__primary-tag', 'span', 'ezstring-field', 'img', 'img-fluid', 'a', 'href')    
     
     def fetch_euronews(self, url):
@@ -116,19 +128,20 @@ class ApNewsViewSet(viewsets.ModelViewSet):
  
     def fetch_ftnews(self, url):
         return self.fetch_news_from_site(url, 'li', 'o-teaser-collection__item', 'div', 'o-teaser__heading', 'p', 'o-teaser__standfirst', 'img', 'o-teaser__image', 'a', 'href')
-    def fetch_xyznews(self, url):
-        return self.fetch_news_from_site(
-            url,
-            'li', 'story-collection__list-item__j4SQe',
-            'h3', 'text__text__1FZLe text__dark-grey__3Ml43 text__medium__1kbOh text__heading_6__1qUJ5 heading__base__2T28j heading__heading_6__RtD9P',
-           
-            'img', 'styles__image-container__3hkY5',
-            'a', 'href'
-        )
-    # def fetch_reutersnews(self, url):
-    #     return self.fetch_news_from_site(url, 'li', 'story-collection__list-item__j4SQe', 'h3', 'text__text__1FZLe text__dark-grey__3Ml43 text__medium__1kbOh text__heading_6__1qUJ5 heading__base__2T28j heading__heading_6__RtD9P', 'div', 'PagePromo', 'img', 'styles__image-container__3hkY5', 'a', 'href')
     
+    def fetch_timesofindianews(self, url):
+        return self.fetch_news_from_site(url, 'div', 'col_l_6', 'figcaption', '', 'h2', 'sortDec', 'img', 'thumb', 'a', 'href')
+    
+    def fetch_scmpnews(self, url):
+        return self.fetch_news_from_site(url,'div', 'e1ofzbgq6 css-1wydqy6 e10emkcr6',  'span', 'css-0 e298i0d2','p', 'css-onn2v5 e1nmpk500','img', 'css-1s0st0y e445x7d0','a', 'href')
+    def fetch_allafricanews(self, url):
+        return self.fetch_news_from_site(url,'div', 'row no-gutter items',  'span', 'headline','p', 'teaser-image-large_paragraph text-block','img', 'img-responsive','a', 'href')
+    def fetch_nytimesnews(self, url):
+        return self.fetch_news_from_site(url,'li', 'css-18yolpw','h3', 'css-1j88qqx e15t083i0','p', 'css-1pga48a e15t083i1','img', 'css-rq4mmj','a', 'href')
+    
+
     def fetch_news_from_site(self, url, container_tag, container_class, headline_tag, headline_class, summary_tag, summary_class, image_tag, image_class, link_tag, link_attr):
+        
         try:
             response = requests.get(url)
             response.raise_for_status()
@@ -141,29 +154,41 @@ class ApNewsViewSet(viewsets.ModelViewSet):
                 headline = item.find(headline_tag, class_=headline_class)
                 summary = item.find(summary_tag, class_=summary_class)
                 image = item.find(image_tag, class_=image_class)
-                link = item.find(link_tag, href=True)
+                link = item.find(link_tag)
+                
+                if headline:
+                    headline_text = headline.get_text(strip=True)
+                else:
+                    headline_text = None
 
-                headline = headline.get_text(strip=True) if headline else None
-                summary = summary.get_text(strip=True) if summary else None
-                image = image['src'] if image and 'src' in image.attrs else None
-                link = link[link_attr] if link else None
-                if link and not link.startswith(('http://', 'https://')):
-                    link = urljoin(url, link)
+                if summary:
+                    summary_text = summary.get_text(strip=True)
+                else:
+                    summary_text = None
 
-                external_id = link or str(uuid.uuid4())
+                if image:
+                    image_url = image['src']
+                else:
+                    image_url = None
+
+                if link:
+                    link_url = link[link_attr]
+                else:
+                    link_url = None
 
                 articles.append({
-                    'Headline': headline,
-                    'Summary': summary,
-                    'Link': link,
-                    'Image': image,
-                    'URL': link,
-                    'ExternalID': external_id
+                    'Headline': headline_text,
+                    'Summary': summary_text,
+                    'Image': image_url,
+                    'Link': link_url,
+                    'URL': url
                 })
-
+                
             return articles
+        
         except Exception as e:
             print(f"Error fetching news from {url}: {e}")
             return []
+
 
 
