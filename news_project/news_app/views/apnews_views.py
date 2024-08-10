@@ -20,14 +20,18 @@ class ApNewsViewSet(viewsets.ModelViewSet):
             'https://www.bbc.com/news', 'https://edition.cnn.com/world', 'https://www.aljazeera.com',
             'https://asia.nikkei.com/', 'https://www.euronews.com/just-in', 'https://www.ft.com/world',
             'https://timesofindia.indiatimes.com/','https://www.scmp.com/live?module=oneline_menu_section_int&pgtype=homepage',
-            'https://www.nytimes.com/section/world','https://allafrica.com/'
+            'https://www.nytimes.com/section/world','https://allafrica.com/',
+            'https://www.premiumtimesng.com/','https://www.sbs.com.au/news','https://news.sky.com/','https://www.thecitizen.co.tz/', 'https://www.nzherald.co.nz/latest-news/'
+            
         ]) if request else [
             'https://apnews.com/', 'https://www.cnbc.com/world/?region=world',
             'https://www.news24.com/', 'https://www.nbcnews.com/', 'https://www.abc.net.au/news/justin',
             'https://www.bbc.com/news', 'https://edition.cnn.com/world', 'https://www.aljazeera.com',
             'https://asia.nikkei.com/', 'https://www.euronews.com/just-in', 'https://www.ft.com/world',
             'https://timesofindia.indiatimes.com/','https://www.scmp.com/live?module=oneline_menu_section_int&pgtype=homepage',
-            'https://www.nytimes.com/section/world','https://allafrica.com/'
+            'https://www.nytimes.com/section/world','https://allafrica.com/',
+            'https://www.premiumtimesng.com/','https://www.sbs.com.au/news','https://news.sky.com/','https://www.thecitizen.co.tz/', 'https://www.nzherald.co.nz/latest-news/'
+            
         ]
 
         all_news_data = []
@@ -61,7 +65,12 @@ class ApNewsViewSet(viewsets.ModelViewSet):
             'timesofindia.indiatimes.com':'timesofindianews',
             'scmp.com':'scmpnews',
             'nytimes.com':'nytimesnews',
-            'allafrica.com':'allafricanews'
+            'allafrica.com':'allafricanews',
+            'premiumtimesng.com': 'premiumtimesng',
+            'news.sky.com' : 'newssky',
+            'sbs.com.' : 'sbsnews',
+            'thecitizen.co' : 'thecitizennews',
+            'nzherald.co.nz': 'nzheraldnews',
         }
         for key, value in sources.items():
             if key in url:
@@ -134,10 +143,30 @@ class ApNewsViewSet(viewsets.ModelViewSet):
     
     def fetch_scmpnews(self, url):
         return self.fetch_news_from_site(url,'div', 'e1ofzbgq6 css-1wydqy6 e10emkcr6',  'span', 'css-0 e298i0d2','p', 'css-onn2v5 e1nmpk500','img', 'css-1s0st0y e445x7d0','a', 'href')
+    
     def fetch_allafricanews(self, url):
         return self.fetch_news_from_site(url,'div', 'row no-gutter items',  'span', 'headline','p', 'teaser-image-large_paragraph text-block','img', 'img-responsive','a', 'href')
+    
     def fetch_nytimesnews(self, url):
         return self.fetch_news_from_site(url,'li', 'css-18yolpw','h3', 'css-1j88qqx e15t083i0','p', 'css-1pga48a e15t083i1','img', 'css-rq4mmj','a', 'href')
+    
+    def fetch_nzheraldnews(self, url):
+        return self.fetch_news_from_site(url, 'div', 'section-chain__wrapper', 'h3', 'story-card__heading', 'p','story-card__deck','a', 'story-card__image-link', 'a', 'href')
+    
+    def fetch_premiumtimesng(self, url):
+        return self.fetch_news_from_site(url, 'div', 'jeg_block_container', 'h3', 'jeg_post_title', '', '', 'img', 'attachment-jnews-120x86 size-jnews-120x86 wp-post-image lazyautosizes lazyloaded', 'a', 'href')
+    
+    def fetch_newssky(self, url):
+        return self.fetch_news_from_site(url, 'div', 'grid-areas', 'div', 'ui-story-headline', '', '', 'img', 'ui-story-image', 'a','href')
+    
+    def fetch_sbsnews(self, url):
+        # return self.fetch_news_from_site(url, 'div', 'MuiBox-root css-0', 'h3', 'MuiTypography-root MuiTypography-subtitle1 e1o065bq2 css-11beddl', 'p', 'MuiTypography-root MuiTypography-body1 css-1du8xgl', 'img', 'css-0', 'a', 'href')
+        return self.fetch_news_from_site(url, 'div', 'css-9w0bx7 e1o065bq7', 'h3', 'MuiTypography-root MuiTypography-subtitle1 e1o065bq2 css-11beddl', 'p', 'MuiTypography-root MuiTypography-body1 css-1du8xgl', 'img', 'css-0', 'a', 'href')
+
+    def fetch_thecitizennews(self, url):
+        # return self.fetch_news_from_site(url, 'li', 'col-1-1 headline-teasers_item', 'h3', 'teaser-image-large_title title-normal', 'p', 'teaser-image-large_paragraph text-block', 'figure', 'lazy-img-container img-space_portrait_ratio1x1 image-lazyloaded', 'a', 'href')
+        # return self.fetch_news_from_site(url, 'section', 'col-1-1 large-col-1-3', 'h3', 'teaser-image-right_title title-extra-small', 'span', 'article-topic article-metadata_topic', 'figure', 'lazy-img-container img-space_portrait_ratio1x1 image-lazyloaded', 'a', 'href')
+        return self.fetch_news_from_site(url, 'div', 'grid-container', 'h3', 'teaser-image-large_title title-medium', 'p', 'teaser-image-large_paragraph text-block', 'img', 'blk-img', 'a', 'href')
     
 
     def fetch_news_from_site(self, url, container_tag, container_class, headline_tag, headline_class, summary_tag, summary_class, image_tag, image_class, link_tag, link_attr):
